@@ -356,7 +356,7 @@ return function(Vargs)
 								end
 
 								hasDetected = true
-								Detected("Kick", "Disallowed content URL detected in CoreGui")
+								Detected("Kick", "Disallowed content URL detected in CoreGui (ID: "..tostring(url)..")")
 							end
 						end)
 
