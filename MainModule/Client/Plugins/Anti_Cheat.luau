@@ -288,7 +288,8 @@ return function(Vargs)
 				return
 			end
 
-			-- // Checks disallowed content URLs in the CoreGui
+			-- // Checks third-party content URLs in the CoreGui
+			local loggedAssetIDs = {} -- Prevent already logged URLs piling up logs
 			service.StartLoop("AntiCoreGui", 15, function()
 				xpcall(function()
 					local function getCoreUrls()
@@ -336,13 +337,14 @@ return function(Vargs)
 					local tempDecal = service.UnWrap(Instance.new("Decal"))
 					tempDecal.Texture = "rbxasset://textures/face.png" -- Its a local asset and it's probably likely to never get removed, so it will never fail to load, unless the users PC is corrupted
 					local coreUrls = getCoreUrls()
-
+					local loggedUrls = {}
 					if not (service.GuiService.MenuIsOpen or service.ContentProvider.RequestQueueSize >= 50 or Player:GetNetworkPing() * 1000 >= 750) then
 						rawContentProvider.PreloadAsync(rawContentProvider, {tempDecal, tempDecal, tempDecal, service.UnWrap(service.CoreGui), tempDecal}, function(url, status)
 							if url == "rbxasset://textures/face.png" and status == Enum.AssetFetchStatus.Success then
 								activated = true
 							elseif not hasDetected and (string.match(url, "^rbxassetid://") or string.match(url, "^http://www%.roblox%.com/asset/%?id=")) then
 								local isItemIcon = false
+								local assetID = string.gsub(url,"%D+","")
 
 								for _, v in ipairs(coreUrls) do
 									if string.find(url, v, 1, true) then
@@ -351,12 +353,13 @@ return function(Vargs)
 									end
 								end
 
-								if isItemIcon == true then
+								if isItemIcon == true or loggedAssetIDs[assetID] then
 									return
 								end
 
 								hasDetected = true
-								Detected("Kick", "Disallowed content URL detected in CoreGui")
+								Detected("log", `Third-party content URL detected in CoreGui (AssetId: {assetID})`)
+								loggedAssetIDs[assetID] = true
 							end
 						end)
 
