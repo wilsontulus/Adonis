@@ -124,7 +124,7 @@ return function(Vargs, GetEnv)
 		end;
 
 		Detected = function(player, action, info)
-			local info = string.sub(string.gsub(tostring(info), "\n", ""), 1, 50)
+			local info = string.sub(string.gsub(tostring(info), "\n", ""), 1, 128)
 
 			if Anti.KickedPlayers[player] then
 				player:Kick(`:: Adonis Anti Cheat ::\n{info}`)
@@ -173,7 +173,7 @@ return function(Vargs, GetEnv)
 			})
 
 			Logs.AddLog(Logs.Exploit,{
-				Text = `[Action: {action} User: ({player})] {string.sub(info, 1, 50)} (Mouse over for full info)`;
+				Text = `[Action: {action} User: ({player})] {string.sub(info, 1, 128)} (Mouse over for full info)`;
 				Desc = tostring(info);
 				Player = player;
 			})
@@ -200,7 +200,7 @@ return function(Vargs, GetEnv)
 								"%s was detected for exploiting, action: %s info: %s  (See exploitlogs for full info)",
 								player.Name,
 								action,
-								string.sub(info, 1, 50)
+								string.sub(info, 1, 128)
 							), {plr}, 30, "MatIcon://Notification important", Core.Bytecode(`client.Remote.Send('ProcessCommand','{Settings.Prefix}exploitlogs')`)
 						)
 					end
