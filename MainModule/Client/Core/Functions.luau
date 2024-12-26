@@ -1933,6 +1933,7 @@ return function(Vargs, GetEnv)
 			for _, p in props do
 				data[p] = service.UserInputService[p]
 			end
+			data["LastInputType"] = string.split(tostring(service.UserInputService:GetLastInputType()), "Enum.UserInputType.")[2]
 			data["Resolution"] = math.floor(workspace.CurrentCamera.ViewportSize.X).." x "..math.floor(workspace.CurrentCamera.ViewportSize.Y)
 			return data
 		end;
