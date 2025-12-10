@@ -1828,7 +1828,7 @@ return function(Vargs, GetEnv)
 
 			}
 
-			game:GetService("ContentProvider"):Preload(`rbxassetid://{audioId}`)
+			service.ContentProvider:PreloadAsync(`rbxassetid://{audioId}`)
 
 			local function getText(str)
 				local tab = {}
@@ -1906,7 +1906,7 @@ return function(Vargs, GetEnv)
 
 		IsValidTexture = function(id)
 			local id = tonumber(id)
-			local ran, info = pcall(function() return service.MarketPlace:GetProductInfo(id) end)
+			local ran, info = pcall(function() return service.MarketPlace:GetProductInfoAsync(id) end)
 
 			if ran and info and info.AssetTypeId == 1 then
 				return true;
@@ -1929,7 +1929,7 @@ return function(Vargs, GetEnv)
 		end;
 
 		GetFriendsOnline = function(maxFriends)
-			return service.Players.LocalPlayer:GetFriendsOnline(maxFriends)
+			return service.Players.LocalPlayer:GetFriendsOnlineAsync(maxFriends)
 		end;
 
 		GetUserInputServiceData = function(args)

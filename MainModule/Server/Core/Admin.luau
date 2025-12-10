@@ -900,7 +900,7 @@ return function(Vargs, GetEnv)
 					if type(pass) == "number" then
 						ran, ret = pcall(service.MarketPlace.UserOwnsGamePassAsync, service.MarketPlace, p.UserId, pass)
 					elseif type(pass) == "string" and tonumber(pass) then
-						ran, ret = pcall(service.MarketPlace.PlayerOwnsAsset, service.MarketPlace, p, tonumber(pass))
+						ran, ret = pcall(service.MarketPlace.PlayerOwnsAssetAsync, service.MarketPlace, p, tonumber(pass))
 					end
 
 					if (ran and ret) or (pGroup and pGroup.Rank >= 10) then --// Complimentary donor access is given to Adonis contributors & developers.

@@ -116,7 +116,7 @@ return function(Vargs, GetEnv)
 			if service.RunService:IsStudio() and not server.Core.DebugMode then return end
 			if #Players:GetPlayers() == 0 then return end
 
-			local newserver = TeleportService:ReserveServer(game.PlaceId)
+			local newserver = TeleportService:ReserveServerAsync(game.PlaceId)
 			Functions.Message("Adonis", Settings.SystemTitle, "The server is restarting, please wait...", "MatIcon://Hourglass empty", service.GetPlayers(), false, 1000)
 		
 			task.wait(2)
@@ -152,7 +152,7 @@ return function(Vargs, GetEnv)
 		Function = function(plr: Player, args: {string})
 			if #Players:GetPlayers() == 0 then return end
 
-			local newserver = TeleportService:ReserveServer(game.PlaceId)
+			local newserver = TeleportService:ReserveServerAsync(game.PlaceId)
 			Functions.Message("Adonis", Settings.SystemTitle, "The server is restarting, please wait...", "MatIcon://Hourglass empty", service.GetPlayers(), false, 1000)
 
 			if Core.DataStore then

@@ -409,7 +409,7 @@ return function(data, env)
 			end
 			spawnBtn.TextTransparency = 0
 			spawnBtn.AutoButtonColor = true
-			local success, info = pcall(service.MarketplaceService.GetProductInfo, service.MarketplaceService, assetId, Enum.InfoType.Asset)
+			local success, info = pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, assetId, Enum.InfoType.Asset)
 			if not success then
 				tab:Add("TextLabel", {
 					Name = "Info";

@@ -32,7 +32,7 @@ end
 
 local ServerScriptService = game:GetService("ServerScriptService")
 local RunService = game:GetService("RunService")
-local InsertService = game:GetService("InsertService")
+local AssetService = game:GetService("AssetService")
 
 -- Support yieldable xpcall
 local function yxpcall(f, callback, ...)
@@ -46,19 +46,19 @@ local function yxpcall(f, callback, ...)
 end
 
 local function loadModuleAsset(moduleId: number)
-	local asset = InsertService:LoadAsset(moduleId)
+	local asset = AssetService:LoadAssetAsync(moduleId)
 
 	if asset.Name == "MainModule" then
-		return assert(require(asset), ":LoadAsset() module returned invalid values!")
+		return assert(require(asset), ":LoadAssetAsync() module returned invalid values!")
 	elseif asset:FindFirstChild("MainModule") then
-		return assert(require(asset.MainModule), ":LoadAsset() module returned invalid values!")
+		return assert(require(asset.MainModule), ":LoadAssetAsync() module returned invalid values!")
 	elseif asset:IsA("ModuleScript") then
-		return assert(require(asset), ":LoadAsset() module returned invalid values!")
+		return assert(require(asset), ":LoadAssetAsync() module returned invalid values!")
 	end
 
 	for _, v in asset:GetChildren() do
 		if v:IsA("ModuleScript") then
-			return assert(require(v), ":LoadAsset() module returned invalid values!")
+			return assert(require(v), ":LoadAssetAsync() module returned invalid values!")
 		end
 	end
 
@@ -268,7 +268,7 @@ else
 			module = loadModuleAsset(moduleId)
 			success = true
 		end, function(reason)
-			warn(`Failed to load Adonis mainmodule {moduleId} via :LoadAsset() method due to {reason}! Loading the backup MainModule...`)
+			warn(`Failed to load Adonis mainmodule {moduleId} via :LoadAssetAsync() method due to {reason}! Loading the backup MainModule...`)
 			yxpcall(function()
 				module = assert(require(data.Backup), "Backup module returned invalid values!")
 				success = true
@@ -279,7 +279,7 @@ else
 					success = true
 				end, function(reason)
 					module = nil
-					warn(`FATAL ERROR! Failed to load Adonis backup MainModule {moduleId} via :LoadAsset() method due to {reason}! Adonis can't be booted up! Please contact the Adonis helpers immediately and add both the regular MainModule and the backup MainModule to your user&group inventory!`)
+					warn(`FATAL ERROR! Failed to load Adonis backup MainModule {moduleId} via :LoadAssetAsync() method due to {reason}! Adonis can't be booted up! Please contact the Adonis helpers immediately and add both the regular MainModule and the backup MainModule to your user&group inventory!`)
 				end)
 			end)
 		end)

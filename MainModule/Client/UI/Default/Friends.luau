@@ -57,7 +57,7 @@ return function(data, env)
 	})
 
 	function generate()
-		local friendDictionary = service.Players.LocalPlayer:GetFriendsOnline()
+		local friendDictionary = service.Players.LocalPlayer:GetFriendsOnlineAsync()
 		table.sort(friendDictionary, function(a, b)
 			return a.UserName < b.UserName
 		end)

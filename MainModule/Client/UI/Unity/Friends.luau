@@ -52,7 +52,7 @@ return function(data, env)
 		})
 
 		function generate()
-			local friendDictionary = game:GetService("Players").LocalPlayer:GetFriendsOnline()
+			local friendDictionary = game:GetService("Players").LocalPlayer:GetFriendsOnlineAsync()
 			local sortedFriends = {}
 			local friendInfo = {}
 

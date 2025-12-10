@@ -786,7 +786,7 @@ return function(Vargs, env)
 							type(policyInfo) == "string" and policyInfo or table.find(policyInfo.AllowedExternalLinkReferences, "Discord") and "No" or "Yes"
 							else "[Redacted]"
 
-						local mailVerif = select(2, xpcall(service.MarketplaceService.PlayerOwnsAsset, function() return "[Error]" end, service.MarketplaceService, v, 102611803))
+						local mailVerif = select(2, xpcall(service.MarketplaceService.PlayerOwnsAssetAsync, function() return "[Error]" end, service.MarketplaceService, v, 102611803))
 						local hasVerifiedMail = if elevated then
 							type(mailVerif) == "string" and mailVerif or mailVerif and "Yes" or "No"
 							else "[Redacted]"
@@ -913,9 +913,9 @@ return function(Vargs, env)
 			AdminLevel = "Players";
 			Function = function(plr: Player, args: {string})
 				local assetId = assert(tonumber(args[1]), "Missing asset ID (argument #1)")
-				local success, assetAlreadyOwned = pcall(service.MarketplaceService.PlayerOwnsAsset, service.MarketplaceService, plr, assetId)
+				local success, assetAlreadyOwned = pcall(service.MarketplaceService.PlayerOwnsAssetAsync, service.MarketplaceService, plr, assetId)
 				assert(not (success and assetAlreadyOwned), "You already own the asset!")
-				local success, assetInfo = pcall(service.MarketplaceService.GetProductInfo, service.MarketplaceService, assetId)
+				local success, assetInfo = pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, assetId)
 				assert(success and not assetInfo.IsLimited, "Cannot buy limited assets!")
 				service.MarketplaceService:PromptPurchase(plr, assetId, false)
 			end

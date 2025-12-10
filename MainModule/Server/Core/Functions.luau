@@ -148,7 +148,7 @@ return function(Vargs, GetEnv)
 				Function = function(msg, plr, parent, players, delplayers, addplayers, randplayers, getplr, plus, isKicking, isServer, dontError, useFakePlayer, allowUnknownUsers)
 					for _,v in parent:GetChildren() do
 						local p = getplr(v)
-						if p and p:IsFriendsWith(plr.UserId) then
+						if p and p:IsFriendsWithAsync(plr.UserId) then
 							table.insert(players, p)
 							plus()
 						end
@@ -207,7 +207,7 @@ return function(Vargs, GetEnv)
 					if matched and tonumber(matched) then
 						for _,v in parent:GetChildren() do
 							local p = getplr(v)
-							if p and p:IsInGroup(tonumber(matched)) then
+							if p and p:IsInGroupAsync(tonumber(matched)) then
 								table.insert(players, p)
 								plus()
 							end
@@ -297,7 +297,7 @@ return function(Vargs, GetEnv)
 					if matched then
 						for _,v in parent:GetChildren() do
 							local p = getplr(v)
-							if p and p:IsInGroup(matched) then
+							if p and p:IsInGroupAsync(matched) then
 								table.insert(players, p)
 								plus()
 							end
@@ -411,9 +411,13 @@ return function(Vargs, GetEnv)
 				PlayerScripts = service.New("Folder", {Name = "FakePlayerScripts"});
 				GetJoinData = function() return {} end;
 				GetFriendsOnline = function() return {} end;
+				GetFriendsOnlineAsync = function() return {} end;
 				GetRankInGroup = function() return 0 end;
+				GetRankInGroupAsync = function() return 0 end;
 				GetRoleInGroup = function() return "Guest" end;
+				GetRoleInGroupAsync = function() return "Guest" end;
 				IsFriendsWith = function() return false end;
+				IsFriendsWithAsync = function() return false end;
 				Kick = function() fakePlayer:SetSpecial("Parent", nil) fakePlayer:Destroy() end;
 				IsA = function(_, className) return className == "Player" or className == "Instance" end;
 			}
@@ -1338,7 +1342,7 @@ return function(Vargs, GetEnv)
 
 		IsValidTexture = function(id)
 			local id = tonumber(id)
-			local ran, info = pcall(function() return service.MarketPlace:GetProductInfo(id) end)
+			local ran, info = pcall(function() return service.MarketPlace:GetProductInfoAsync(id) end)
 
 			if ran and info and info.AssetTypeId == 1 then
 				return true;
@@ -1566,8 +1570,8 @@ return function(Vargs, GetEnv)
 
 			local Humanoid: Humanoid = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
 
-			local HumanoidDescription = Humanoid:GetAppliedDescription() or service.Players:GetHumanoidDescriptionFromUserId(plr.UserId)
-			local newCharacterModel: any = service.Players:CreateHumanoidModelFromDescription(HumanoidDescription, rigType, Enum.AssetTypeVerification.Always)
+			local HumanoidDescription = Humanoid:GetAppliedDescription() or service.Players:GetHumanoidDescriptionFromUserIdAsync(plr.UserId)
+			local newCharacterModel: any = service.Players:CreateHumanoidModelFromDescriptionAsync(HumanoidDescription, rigType, Enum.AssetTypeVerification.Always)
 			local Animate: BaseScript = newCharacterModel.Animate
 
 			newCharacterModel.Humanoid.DisplayName = Humanoid.DisplayName

@@ -293,7 +293,7 @@ SoundFolder.Parent = game:GetService("Players").LocalPlayer.Character
 
 function PreloadAudio(sounds)
 	for i, v in pairs(sounds) do
-		ContentProvider:Preload(`http://www.roblox.com/asset/?id={v}`)
+		ContentProvider:PreloadAsync(`http://www.roblox.com/asset/?id={v}`)
 	end
 end
 function SetSounds(sounds)

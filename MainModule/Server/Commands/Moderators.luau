@@ -845,7 +845,7 @@ return function(Vargs, env)
 						for _, prop in DescsToRemove do
 							humanoidDesc[prop] = ""
 						end
-						humanoid:ApplyDescription(humanoidDesc, Enum.AssetTypeVerification.Always)
+						humanoid:ApplyDescriptionAsync(humanoidDesc, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -893,7 +893,7 @@ return function(Vargs, env)
 						end
 
 						humanoidDesc:SetAccessories(accessoryBlob, false)
-						humanoid:ApplyDescription(humanoidDesc, Enum.AssetTypeVerification.Always)
+						humanoid:ApplyDescriptionAsync(humanoidDesc, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -3098,7 +3098,7 @@ return function(Vargs, env)
 				local isSelf = args[3] and string.lower(args[3]) == "me"
 				local avatarType = args[4] and assert(Enum.HumanoidRigType[string.upper(args[4])], "Invalid avatar type given")
 				local appearenceId = not isSelf and args[3] and (tonumber(string.match(args[3], "^userid%-(%d*)")) or assert(Functions.GetUserIdFromNameAsync(args[3]), "Unable to fetch user."))
-				local description = appearenceId and assert(select(2, xpcall(service.Players.GetHumanoidDescriptionFromUserId, warn, service.Players, appearenceId)), "Unable to get avatar for target appearence.")
+				local description = appearenceId and assert(select(2, xpcall(service.Players.GetHumanoidDescriptionFromUserIdAsync, warn, service.Players, appearenceId)), "Unable to get avatar for target appearence.")
 
 				for _, v in service.GetPlayers(plr, args[1]) do
 					local character = v.Character
@@ -3113,7 +3113,7 @@ return function(Vargs, env)
 
 					for i = 1, count do
 						task.spawn(function()
-							local clone = avatarType and service.Players:CreateHumanoidModelFromDescription(description or localDescription, avatarType, Enum.AssetTypeVerification.Always) or character:Clone()
+							local clone = avatarType and service.Players:CreateHumanoidModelFromDescriptionAsync(description or localDescription, avatarType, Enum.AssetTypeVerification.Always) or character:Clone()
 							table.insert(Variables.Objects, clone)
 
 							local oldAnimate, animate = clone:FindFirstChild("Animate"), nil
@@ -3142,7 +3142,7 @@ return function(Vargs, env)
 							clone.Parent = workspace
 							if appearenceId and not avatarType then
 								clone.Name = Functions.GetNameFromUserIdAsync(appearenceId)
-								clone:FindFirstChildOfClass("Humanoid"):ApplyDescription(description, Enum.AssetTypeVerification.Always)
+								clone:FindFirstChildOfClass("Humanoid"):ApplyDescriptionAsync(description, Enum.AssetTypeVerification.Always)
 							end
 						end)
 					end
@@ -3191,7 +3191,7 @@ return function(Vargs, env)
 
 							local cl = target_humandescrip:Clone()
 							cl.Parent = v.Character:FindFirstChildOfClass("Humanoid")
-							pcall(function() v.Character:FindFirstChildOfClass("Humanoid"):ApplyDescription(cl, Enum.AssetTypeVerification.Always) end)
+							pcall(function() v.Character:FindFirstChildOfClass("Humanoid"):ApplyDescriptionAsync(cl, Enum.AssetTypeVerification.Always) end)
 
 							for _, a in target_character:GetChildren() do
 								if a:IsA("Accessory") then
@@ -3265,9 +3265,9 @@ return function(Vargs, env)
 					if v.Character then
 						local Humanoid = v.Character.Humanoid
 
-						local HumanoidDescription = Humanoid:GetAppliedDescription() or service.Players:GetHumanoidDescriptionFromUserId(v.UserId)
-						local newCharacterModel: Model = service.Players:CreateHumanoidModelFromDescription(HumanoidDescription, v.Character.Humanoid.RigType)
-						local Animate: BaseScript = newCharacterModel.Animate
+						local HumanoidDescription = Humanoid:GetAppliedDescription() or service.Players:GetHumanoidDescriptionFromUserIdAsync(v.UserId)
+						local newCharacterModel: Model = service.Players:CreateHumanoidModelFromDescriptionAsync(HumanoidDescription, v.Character.Humanoid.RigType)
+						local Animate: BaseScript? = newCharacterModel:FindFirstChild("Animate")
 
 						newCharacterModel.Humanoid.DisplayName = Humanoid.DisplayName
 						newCharacterModel.Name = v.Name
@@ -3338,7 +3338,7 @@ return function(Vargs, env)
 
 						--// Handle respawn and repositioning
 						local newChar, newHumanoid, newPrimary;
-						task.delay(0.1, pcall, p.LoadCharacter, p)
+						task.delay(0.1, pcall, p.LoadCharacterAsync, p)
 						if ev then ev:Disconnect() end
 
 						--// Reposition if possible
@@ -3405,7 +3405,7 @@ return function(Vargs, env)
 			Function = function(plr: Player, args: {string})
 				for _, v in service.GetPlayers(plr, args[1]) do
 					task.defer(function()
-						pcall(v.LoadCharacter, v)
+						pcall(v.LoadCharacterAsync, v)
 						Remote.Send(v, "Function", "SetView", "reset")
 					end)
 				end
@@ -3930,7 +3930,7 @@ return function(Vargs, env)
 							humanoidDesc[property] = color
 						end
 
-						task.defer(humanoid.ApplyDescription, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
+						task.defer(humanoid.ApplyDescriptionAsync, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -4669,7 +4669,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				local place = tonumber(args[2]) or game.PlaceId
-				local code, serverId = service.TeleportService:ReserveServer(place)
+				local code, serverId = service.TeleportService:ReserveServerAsync(place)
 				local servers = Core.GetData("PrivateServers") or {}
 				servers[args[1]] = {Code = code, ID = place, PrivateServerID = serverId}
 				Core.SetData("PrivateServers", servers)
@@ -5251,7 +5251,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {[number]:string})
 				local ClothingId = tonumber(args[2])
-				local AssetIdType = service.MarketPlace:GetProductInfo(ClothingId).AssetTypeId
+				local AssetIdType = service.MarketPlace:GetProductInfoAsync(ClothingId).AssetTypeId
 				local TShirt = ((AssetIdType == 11 or AssetIdType == 2) and service.Insert(ClothingId)) or (AssetIdType == 1 and Functions.CreateClothingFromImageId("ShirtGraphic", ClothingId)) or error("Item ID passed has invalid item type")
 				assert(TShirt, "Could not retrieve t-shirt asset for the supplied ID")
 
@@ -5289,7 +5289,7 @@ return function(Vargs, env)
 									local humDescClone = humanoidAppliedDesc:Clone()
 
 									humDescClone.GraphicTShirt = 6901238398 -- Some template shirt graphic
-									v.Character.Humanoid:ApplyDescription(humDescClone, Enum.AssetTypeVerification.Always)
+									v.Character.Humanoid:ApplyDescriptionAsync(humDescClone, Enum.AssetTypeVerification.Always)
 									humDescClone:Destroy()
 								end
 
@@ -5320,7 +5320,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				local ClothingId = tonumber(args[2])
-				local AssetIdType = service.MarketPlace:GetProductInfo(ClothingId).AssetTypeId
+				local AssetIdType = service.MarketPlace:GetProductInfoAsync(ClothingId).AssetTypeId
 				local Shirt = AssetIdType == 11 and service.Insert(ClothingId) or AssetIdType == 1 and Functions.CreateClothingFromImageId("Shirt", ClothingId) or error("Item ID passed has invalid item type")
 				assert(Shirt, "Unexpected error occured; clothing is missing")
 
@@ -5361,7 +5361,7 @@ return function(Vargs, env)
 
 									-- Default Shirt ID 855777286, given when no valid shirt was set with HumanoidDescription
 									humDescClone.Shirt = 855777286 -- Default shirt TODO: You want to change this because the ID put here can't be given with the command if already ran.
-									v.Character.Humanoid:ApplyDescription(humDescClone, Enum.AssetTypeVerification.Always)
+									v.Character.Humanoid:ApplyDescriptionAsync(humDescClone, Enum.AssetTypeVerification.Always)
 									humDescClone:Destroy()
 								end
 
@@ -5392,7 +5392,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				local ClothingId = tonumber(args[2])
-				local AssetIdType = service.MarketPlace:GetProductInfo(ClothingId).AssetTypeId
+				local AssetIdType = service.MarketPlace:GetProductInfoAsync(ClothingId).AssetTypeId
 				local Pants = AssetIdType == 12 and service.Insert(ClothingId) or AssetIdType == 1 and Functions.CreateClothingFromImageId("Pants", ClothingId) or error("Item ID passed has invalid item type")
 				assert(Pants, "Unexpected error occured; clothing is missing")
 
@@ -5433,7 +5433,7 @@ return function(Vargs, env)
 
 									-- Default Pants ID 855782781, given when no valid pants was set with HumanoidDescription
 									humDescClone.Pants = 855782781 -- Default pants
-									v.Character.Humanoid:ApplyDescription(humDescClone, Enum.AssetTypeVerification.Always)
+									v.Character.Humanoid:ApplyDescriptionAsync(humDescClone, Enum.AssetTypeVerification.Always)
 									humDescClone:Destroy()
 								end
 
@@ -5464,7 +5464,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				local faceId = assert(tonumber(args[2]), "Invalid asset ID provided")
-				local faceAssetTypeId = service.MarketPlace:GetProductInfo(tonumber(args[2])).AssetTypeId
+				local faceAssetTypeId = service.MarketPlace:GetProductInfoAsync(tonumber(args[2])).AssetTypeId
 				local asset;
 
 				if faceAssetTypeId == 1 then
@@ -5529,7 +5529,7 @@ return function(Vargs, env)
 								char:SetAttribute("LoadingSavedOutfit", true)
 								local newHum = char:WaitForChild("Humanoid")
 								newHum:WaitForChild("HumanoidDescription")
-								task.defer(newHum.ApplyDescription, newHum, humanoidDesc, Enum.AssetTypeVerification.Always)
+								task.defer(newHum.ApplyDescriptionAsync, newHum, humanoidDesc, Enum.AssetTypeVerification.Always)
 								for i,x in customAccessories do
 									service.SecureAccessory(v, x)
 								end
@@ -5557,8 +5557,8 @@ return function(Vargs, env)
 					if v.Character then
 						local humanoid: Humanoid? = v.Character and v.Character:FindFirstChildOfClass("Humanoid")
 						if humanoid then
-							local humdesc = service.Players:GetHumanoidDescriptionFromUserId(v.UserId)
-							humanoid:ApplyDescription(humdesc)
+							local humdesc = service.Players:GetHumanoidDescriptionFromUserIdAsync(v.UserId)
+							humanoid:ApplyDescriptionAsync(humdesc)
 						end
 
 						for i,x in v.Character:GetChildren() do
@@ -5582,7 +5582,7 @@ return function(Vargs, env)
 			Function = function(plr: Player, args: {[number]:string})
 				local itemId = assert(tonumber(args[2]), "Argument 2 missing or invalid")
 
-				local success, productInfo = pcall(service.MarketplaceService.GetProductInfo, service.MarketplaceService, itemId)
+				local success, productInfo = pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, itemId)
 				assert(success and productInfo, "Invalid item ID")
 
 				local AssetTypeNameDescriptionOverides = {
@@ -5647,7 +5647,7 @@ return function(Vargs, env)
 							end
 						end
 
-						task.defer(humanoid.ApplyDescription, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
+						task.defer(humanoid.ApplyDescriptionAsync, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -5666,7 +5666,7 @@ return function(Vargs, env)
 						if humanoid then
 							local humanoidDesc: HumanoidDescription = humanoid:GetAppliedDescription()
 							humanoidDesc.GraphicTShirt = 0
-							task.defer(humanoid.ApplyDescription, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
+							task.defer(humanoid.ApplyDescriptionAsync, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
 						end
 					end
 				end
@@ -5685,7 +5685,7 @@ return function(Vargs, env)
 					if humanoid then
 						local humanoidDesc: HumanoidDescription = humanoid:GetAppliedDescription()
 						humanoidDesc.Shirt = 0
-						task.defer(humanoid.ApplyDescription, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
+						task.defer(humanoid.ApplyDescriptionAsync, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -5703,7 +5703,7 @@ return function(Vargs, env)
 					if humanoid then
 						local humanoidDesc: HumanoidDescription = humanoid:GetAppliedDescription()
 						humanoidDesc.Pants = 0
-						task.defer(humanoid.ApplyDescription, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
+						task.defer(humanoid.ApplyDescriptionAsync, humanoid, humanoidDesc, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -6045,8 +6045,8 @@ return function(Vargs, env)
 					end
 
 					pcall(function()
-						if tonumber(id) and mp:GetProductInfo(id).AssetTypeId == 3 then
-							name = `Now playing {mp:GetProductInfo(id).Name}`
+						if tonumber(id) and mp:GetProductInfoAsync(id).AssetTypeId == 3 then
+							name = `Now playing {mp:GetProductInfoAsync(id).Name}`
 						end
 					end)
 
@@ -6408,12 +6408,12 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				assert(args[1], "Missing player name")
-				local success, desc = pcall(service.Players.GetHumanoidDescriptionFromOutfitId, service.Players, assert(tonumber(args[2]), "Missing OutfitId"))
+				local success, desc = pcall(service.Players.GetHumanoidDescriptionFromOutfitIdAsync, service.Players, assert(tonumber(args[2]), "Missing OutfitId"))
 
 				if success then
 					for _, v in service.GetPlayers(plr, args[1]) do
 						if v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
-							v.Character.Humanoid:ApplyDescription(desc, Enum.AssetTypeVerification.Always)
+							v.Character.Humanoid:ApplyDescriptionAsync(desc, Enum.AssetTypeVerification.Always)
 						end
 					end
 				else
@@ -6436,14 +6436,14 @@ return function(Vargs, env)
 				})
 				if target then
 					target = target[1]
-					local success, desc = pcall(service.Players.GetHumanoidDescriptionFromUserId, service.Players, target.UserId)
+					local success, desc = pcall(service.Players.GetHumanoidDescriptionFromUserIdAsync, service.Players, target.UserId)
 
 					if success then
 						for _, v in service.GetPlayers(plr, args[1]) do
 							v.CharacterAppearanceId = target.UserId
 
 							if v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
-								v.Character.Humanoid:ApplyDescription(desc, Enum.AssetTypeVerification.Always)
+								v.Character.Humanoid:ApplyDescriptionAsync(desc, Enum.AssetTypeVerification.Always)
 							end
 						end
 					else
@@ -6467,10 +6467,10 @@ return function(Vargs, env)
 						local Humanoid = v.Character and v.Character:FindFirstChildOfClass("Humanoid")
 
 						if Humanoid then
-							local success, desc = pcall(service.Players.GetHumanoidDescriptionFromUserId, service.Players, v.UserId)
+							local success, desc = pcall(service.Players.GetHumanoidDescriptionFromUserIdAsync, service.Players, v.UserId)
 
 							if success then
-								Humanoid:ApplyDescription(desc, Enum.AssetTypeVerification.Always)
+								Humanoid:ApplyDescriptionAsync(desc, Enum.AssetTypeVerification.Always)
 							end
 						end
 					end)

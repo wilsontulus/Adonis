@@ -137,7 +137,7 @@ return function(Vargs, GetEnv)
 
 					if workspace:IsAncestorOf(humanoid) then
 						Detected(player, "log", "Player took too long to respawn. Respawning manually")
-						player:LoadCharacter()
+						player:LoadCharacterAsync()
 					end
 				end)
 			end

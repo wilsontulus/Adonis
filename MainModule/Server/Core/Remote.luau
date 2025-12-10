@@ -691,13 +691,13 @@ return function(Vargs, GetEnv)
 					Usage = "respawn <player>";
 					Command = "respawn";
 					Arguments = 1;
-					Description = "Calls :LoadCharacter() on the target player";
+					Description = "Calls :LoadCharacterAsync() on the target player";
 					Function = function(p,args,data)
 						local plrs = service.GetPlayers(p, args[1], {UseFakePlayer = true})
 						if #plrs > 0 then
 							local ret = {}
 							for _, v in plrs do
-								v:LoadCharacter()
+								v:LoadCharacterAsync()
 								table.insert(ret, `Respawned {service.FormatPlayer(v)}`)
 							end
 						else

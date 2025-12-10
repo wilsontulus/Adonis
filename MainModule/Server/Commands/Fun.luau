@@ -340,8 +340,8 @@ return function(Vargs, env)
 						})
 
 						local orgHumanoid = v.Character and v.Character:FindFirstChildOfClass("Humanoid")
-						local model = service.Players:CreateHumanoidModelFromDescription(
-							orgHumanoid and orgHumanoid:GetAppliedDescription() or service.Players:GetHumanoidDescriptionFromUserId(v.CharacterAppearanceId > 0 and v.CharacterAppearanceId or v.UserId),
+						local model = service.Players:CreateHumanoidModelFromDescriptionAsync(
+							orgHumanoid and orgHumanoid:GetAppliedDescription() or service.Players:GetHumanoidDescriptionFromUserIdAsync(v.CharacterAppearanceId > 0 and v.CharacterAppearanceId or v.UserId),
 							orgHumanoid and orgHumanoid.RigType or Enum.HumanoidRigType.R15
 						)
 
@@ -615,7 +615,7 @@ return function(Vargs, env)
 							description[k] = v
 						end
 
-						task.defer(humanoid.ApplyDescription, humanoid, description, Enum.AssetTypeVerification.Always)
+						task.defer(humanoid.ApplyDescriptionAsync, humanoid, description, Enum.AssetTypeVerification.Always)
 
 						if ActionProperties.Speed then humanoid.WalkSpeed = ActionProperties.Speed end
 						if ActionProperties.Jumppower then humanoid.JumpPower = ActionProperties.Jumppower end
@@ -744,7 +744,7 @@ return function(Vargs, env)
 							description[k] = v
 						end
 
-						task.defer(humanoid.ApplyDescription, humanoid, description, Enum.AssetTypeVerification.Always)
+						task.defer(humanoid.ApplyDescriptionAsync, humanoid, description, Enum.AssetTypeVerification.Always)
 					end
 				end
 			end
@@ -2123,7 +2123,7 @@ return function(Vargs, env)
 								orgColors[k], description[k] = description[k], v
 							end
 
-							task.defer(humanoid.ApplyDescription, humanoid, description, Enum.AssetTypeVerification.Always)
+							task.defer(humanoid.ApplyDescriptionAsync, humanoid, description, Enum.AssetTypeVerification.Always)
 							local run = true
 							task.spawn(function() wait(10) run = false end)
 							repeat
@@ -2135,7 +2135,7 @@ return function(Vargs, env)
 									description[k] = orgColors[k]
 								end
 
-								task.defer(humanoid.ApplyDescription, humanoid, description, Enum.AssetTypeVerification.Always)
+								task.defer(humanoid.ApplyDescriptionAsync, humanoid, description, Enum.AssetTypeVerification.Always)
 								poisoned:Destroy()
 							end
 						end
@@ -3902,13 +3902,13 @@ return function(Vargs, env)
 				for i, v in service.GetPlayers(plr, args[1]) do
 					if v.Character then
 						local torso = v.Character:FindFirstChild("HumanoidRootPart")
-						local pTorso = plr.Character:FindFirstChild("HumanoidRootPart")
+						local pTorso = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
 						if torso and pTorso and plr ~= v then
 							Admin.RunCommand(`{Settings.Prefix}clip`, v.Name)
 							task.wait(0.3)
 							torso.CFrame = pTorso.CFrame*CFrame.new(0, 0, 5)
 						else
-							plr:LoadCharacter()
+							plr:LoadCharacterAsync()
 						end
 					end
 				end
@@ -4528,7 +4528,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				local gearID = assert(tonumber(args[2]), "Invalid ID (not Number?)")
-				local AssetIdType = service.MarketPlace:GetProductInfo(gearID).AssetTypeId
+				local AssetIdType = service.MarketPlace:GetProductInfoAsync(gearID).AssetTypeId
 
 				if AssetIdType == 19 then
 					local gear = service.Insert(gearID)
@@ -4556,7 +4556,7 @@ return function(Vargs, env)
 			AdminLevel = "Moderators";
 			Function = function(plr: Player, args: {string})
 				local gearID = assert(tonumber(args[2]), "Invalid ID (not Number?)")
-				local AssetIdType = service.MarketPlace:GetProductInfo(gearID).AssetTypeId
+				local AssetIdType = service.MarketPlace:GetProductInfoAsync(gearID).AssetTypeId
 
 				if AssetIdType == 19 then
 					local gear = service.Insert(gearID)
@@ -4709,8 +4709,8 @@ return function(Vargs, env)
 							end
 						end
 
-						v1hum:ApplyDescription(v2desc, Enum.AssetTypeVerification.Always)
-						v2hum:ApplyDescription(v1desc, Enum.AssetTypeVerification.Always)
+						v1hum:ApplyDescriptionAsync(v2desc, Enum.AssetTypeVerification.Always)
+						v2hum:ApplyDescriptionAsync(v1desc, Enum.AssetTypeVerification.Always)
 
 						v1.Character:PivotTo(v2pos)
 						v2.Character:PivotTo(v1pos)
@@ -4890,7 +4890,7 @@ return function(Vargs, env)
 					soundrange = 100
 				end
 
-				local Success, Return = pcall(service.MarketplaceService.GetProductInfo, service.MarketplaceService, soundid)
+				local Success, Return = pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, soundid)
 
 				assert(Success, "Sound Id isn't a sound or doesn't exist.")
 				if Success and Return then
@@ -4933,7 +4933,7 @@ return function(Vargs, env)
 						clickd.MouseClick:Connect(function(clicker)
 							if sharetype == "self" and clicker.UserId ~= ownerid then return end
 							if sharetype == "friends" then
-								if clicker.UserId ~= ownerid and not clicker:IsFriendsWith(ownerid) then
+								if clicker.UserId ~= ownerid and not clicker:IsFriendsWithAsync(ownerid) then
 									return
 								end
 							end
@@ -4965,7 +4965,7 @@ return function(Vargs, env)
 					spart.Changed:Connect(function(prot)
 						if prot == "Name" and changeable then
 							if prevname == spart.Name then return end
-							local Success, ProductInfo = pcall(service.MarketplaceService.GetProductInfo, service.MarketplaceService, tonumber(spart.Name)or 0)
+							local Success, ProductInfo = pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, tonumber(spart.Name)or 0)
 
 							if Success and ProductInfo then
 								if ProductInfo.AssetTypeId ~= 3 then

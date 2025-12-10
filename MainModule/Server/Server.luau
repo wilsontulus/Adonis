@@ -84,6 +84,7 @@ local SERVICES_WE_USE = table.freeze {
 	"RunService";
 	"InsertService";
 	"NetworkServer";
+	"AssetService";
 }
 
 local unique = {}

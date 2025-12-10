@@ -1039,7 +1039,7 @@ return function(errorHandler, eventChecker, fenceSpecific, env)
 				local canUpdateCache = not cache.lastUpdated or os.clock()-cache.lastUpdated > 120
 
 				if canUpdateCache then
-					local suc,info = pcall(service.MarketplaceService.GetProductInfo, service.MarketplaceService, assetId, infoType)
+					local suc,info = pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, assetId, infoType)
 
 					if suc and type(info) == "table" then
 						info.Created = true
@@ -1102,7 +1102,7 @@ return function(errorHandler, eventChecker, fenceSpecific, env)
 				passOwnershipCache[cacheIndex] = cacheTab
 
 				local suc,ers = pcall(function()
-					return service.MarketplaceService:PlayerOwnsAsset(player, assetId)
+					return service.MarketplaceService:PlayerOwnsAssetAsync(player, assetId)
 				end)
 
 				if suc then
@@ -1366,7 +1366,7 @@ return function(errorHandler, eventChecker, fenceSpecific, env)
 		UnallowedCache = {},
 		Insert = function(id, rawModel)
 			if service.UnallowedCache and service.UnallowedCache[id] then return end
-			local model = service.InsertService:LoadAsset(id)
+			local model = service.AssetService:LoadAssetAsync(id)
 			if not rawModel and model:IsA("Model") and model.Name == "Model" then
 				local asset = model:GetChildren()[1]
 				asset.Parent = model.Parent
